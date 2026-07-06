@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Tarun Saini | Android Developer</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#09090F;--bg2:#111118;--bg3:#18181F;
+  --g:#3DDC84;--p:#A855F7;--c:#22D3EE;--r:#FF6366;--y:#FBBF24;
+  --txt:#E2E8F0;--mut:#8B95A7;--bdr:rgba(255,255,255,0.07);
+  --fnt:'Segoe UI',system-ui,sans-serif
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--fnt);background:var(--bg);color:var(--txt);overflow-x:hidden;line-height:1.6}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--g);border-radius:3px}
+
+/* FADE IN */
+.fi{opacity:0;transform:translateY(28px);transition:opacity .65s ease,transform .65s ease}
+.fi.on{opacity:1;transform:translateY(0)}
+.fi:nth-child(2){transition-delay:.1s}.fi:nth-child(3){transition-delay:.18s}.fi:nth-child(4){transition-delay:.26s}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;height:62px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 6%;background:rgba(9,9,15,.92);
+  backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);
+  z-index:999;transition:all .3s ease
+}
+nav.scrolled{
+  height:55px;
+  border-bottom-color:rgba(61,220,132,.15);
+  box-shadow:0 5px 30px rgba(0,0,0,.4)
+}
+.logo{
+  font-size:1.4rem;font-weight:900;
+  background:linear-gradient(135deg,var(--g),var(--c));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text
+}
+.nvl{display:flex;gap:1.8rem;list-style:none}
+.nvl a{
+  color:var(--mut);text-decoration:none;font-size:.82rem;
+  font-weight:500;transition:color .2s;position:relative
+}
+.nvl a::after{
+  content:'';position:absolute;bottom:-4px;left:0;
+  width:0;height:2px;background:linear-gradient(90deg,var(--g),var(--c));
+  transition:width .3s ease
+}
+.nvl a:hover{color:var(--txt)}
+.nvl a:hover::after{width:100%}
+.nh{
+  padding:.48rem 1.3rem;
+  background:linear-gradient(135deg,var(--g),var(--c));
+  color:#09090F;font-weight:700;font-size:.8rem;
+  border-radius:50px;text-decoration:none;transition:all .25s
+}
+.nh:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(61,220,132,.38)}
+
+/* HAMBURGER */
+.ham{
+  display:none;flex-direction:column;gap:5px;
+  cursor:pointer;z-index:1001;padding:4px
+}
+.ham span{
+  width:26px;height:2.5px;background:var(--txt);
+  border-radius:3px;transition:all .3s ease
+}
+.ham.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.ham.open span:nth-child(2){opacity:0}
+.ham.open span:nth-child(3){transform:rotate(-45deg) translate(7px,-7px)}
+
+/* MOBILE NAV */
+@media(max-width:768px){
+  .ham{display:flex}
+  .nvl{
+    position:fixed;top:0;right:-100%;width:72%;height:100vh;
+    background:var(--bg2);flex-direction:column;
+    justify-content:center;align-items:center;gap:2.2rem;
+    transition:right .35s ease;border-left:1px solid var(--bdr);
+    z-index:1000
+  }
+  .nvl.open{right:0}
+  .nvl a{font-size:1rem}
+  .nh{display:none}
+}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;display:flex;align-items:center;
+  padding:80px 6% 4rem;position:relative;overflow:hidden
+}
+#hc{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.hi{display:flex;align-items:center;justify-content:space-between;width:100%;gap:2rem;z-index:1;position:relative}
+.ht{max-width:580px}
+.badge{
+  display:inline-flex;align-items:center;gap:.45rem;font-size:.76rem;
+  font-weight:600;color:var(--g);background:rgba(61,220,132,.1);
+  border:1px solid rgba(61,220,132,.2);padding:.3rem .85rem;
+  border-radius:50px;margin-bottom:1.3rem;letter-spacing:.04em
+}
+.dp{width:7px;height:7px;background:var(--g);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(1.5)}}
+.hero h1{font-size:clamp(2.3rem,4vw,3.7rem);font-weight:900;line-height:1.08;letter-spacing:-.025em;margin-bottom:1.1rem}
+.gr{background:linear-gradient(135deg,var(--g) 0%,var(--c) 45%,var(--p) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+#tw::after{content:'|';animation:bl .7s infinite;color:var(--g);margin-left:1px}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:0}}
+.hsub{font-size:.97rem;color:var(--mut);line-height:1.85;margin-bottom:1.9rem}
+.hsub strong{color:var(--txt)}
+.hbs{display:flex;gap:.85rem;flex-wrap:wrap}
+.bp{
+  display:inline-flex;align-items:center;gap:.4rem;
+  padding:.78rem 1.75rem;background:linear-gradient(135deg,var(--g),var(--c));
+  color:#09090F;font-weight:700;border:none;border-radius:50px;
+  cursor:pointer;text-decoration:none;font-size:.88rem;transition:all .3s
+}
+.bp:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(61,220,132,.32)}
+.bs{
+  display:inline-flex;align-items:center;gap:.4rem;
+  padding:.78rem 1.75rem;background:transparent;color:var(--txt);
+  font-weight:600;border:1.5px solid var(--bdr);border-radius:50px;
+  cursor:pointer;text-decoration:none;font-size:.88rem;transition:all .3s
+}
+.bs:hover{border-color:var(--p);color:var(--p);transform:translateY(-2px)}
+.hps{display:flex;gap:1.1rem;margin-top:1.8rem;flex-wrap:wrap}
+.hpl{display:flex;align-items:center;gap:.38rem;font-size:.78rem;color:var(--mut)}
+.hpl strong{color:var(--txt);font-size:.9rem}
+.ps{width:4px;height:4px;background:rgba(255,255,255,.2);border-radius:50%}
+
+/* PHONE MOCKUP */
+.pw{flex-shrink:0}
+.ph{
+  width:195px;height:375px;background:var(--bg3);border-radius:34px;
+  border:1.5px solid rgba(255,255,255,.1);padding:.82rem;
+  box-shadow:0 40px 80px rgba(0,0,0,.55),inset 0 0 40px rgba(61,220,132,.03);
+  animation:flt 6s ease-in-out infinite
+}
+@keyframes flt{0%,100%{transform:translateY(0) rotateY(0deg)}50%{transform:translateY(-14px) rotateY(6deg)}}
+.phn{width:50px;height:15px;background:var(--bg);border-radius:8px;margin:0 auto .8rem}
+.phs{background:var(--bg);border-radius:15px;height:calc(100% - 34px);padding:.75rem;overflow:hidden}
+.phb{height:8px;background:linear-gradient(90deg,var(--g),var(--c));border-radius:4px;margin-bottom:.75rem}
+.phc{background:var(--bg3);border-radius:8px;padding:.55rem;margin-bottom:.55rem;border:1px solid var(--bdr)}
+.phl{height:4px;border-radius:3px;background:var(--bdr);margin-bottom:4px}
+.phl:last-child{margin:0}
+
+/* ── SECTIONS ── */
+section{padding:5.5rem 6%}
+.sl{font-size:.7rem;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--g);margin-bottom:.5rem}
+.st{font-size:clamp(1.8rem,2.8vw,2.5rem);font-weight:800;letter-spacing:-.02em;margin-bottom:2.5rem}
+.st .ac{background:linear-gradient(135deg,var(--p),var(--r));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* ── ABOUT ── */
+#about{background:var(--bg2)}
+.ag{display:grid;grid-template-columns:1.2fr 1fr;gap:3.5rem;align-items:center}
+.ap{color:var(--mut);line-height:1.85;margin-bottom:.9rem;font-size:.93rem}
+.ap strong{color:var(--txt)}.ap em{color:var(--g);font-style:normal;font-weight:600}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
+.sc{
+  background:var(--bg);border:1px solid var(--bdr);border-radius:18px;
+  padding:1.3rem;text-align:center;transition:all .4s;
+  cursor:default;transform-style:preserve-3d
+}
+.sc:hover{border-color:rgba(255,255,255,.15);transform:translateY(-4px) rotateX(6deg);box-shadow:0 20px 40px rgba(0,0,0,.3)}
+.sc .n{font-size:2.1rem;font-weight:900;line-height:1;margin-bottom:.2rem}
+.sc .l{font-size:.74rem;color:var(--mut)}
+.sc:nth-child(1) .n{background:linear-gradient(135deg,var(--g),var(--c));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sc:nth-child(2) .n{background:linear-gradient(135deg,var(--p),var(--r));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sc:nth-child(3) .n{background:linear-gradient(135deg,var(--c),var(--p));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sc:nth-child(4) .n{background:linear-gradient(135deg,var(--r),var(--y));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* ── SKILLS ── */
+.skb{margin-bottom:1.9rem}
+.skc{font-size:.7rem;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.18em;margin-bottom:.75rem}
+.skr{display:flex;flex-wrap:wrap;gap:.55rem}
+.skt{
+  display:flex;align-items:center;gap:.36rem;
+  padding:.44rem .95rem;background:var(--bg2);
+  border:1px solid var(--bdr);border-radius:50px;
+  font-size:.78rem;font-weight:600;color:var(--txt);transition:all .3s;cursor:default
+}
+.skt:hover{transform:translateY(-2px) scale(1.05);border-color:var(--hc,var(--g));color:var(--hc,var(--g));box-shadow:0 5px 16px rgba(0,0,0,.25)}
+
+/* ── PROJECTS ── */
+#projects{background:var(--bg2)}
+.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(275px,1fr));gap:1.25rem}
+.pc{
+  background:var(--bg);border:1px solid var(--bdr);border-radius:22px;
+  padding:1.6rem;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;cursor:default;transition:box-shadow .3s
+}
+.pc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.pc:nth-child(1)::before{background:linear-gradient(90deg,var(--g),var(--c))}
+.pc:nth-child(2)::before{background:linear-gradient(90deg,var(--p),var(--r))}
+.pc:nth-child(3)::before{background:linear-gradient(90deg,var(--c),var(--p))}
+.pc:nth-child(4)::before{background:linear-gradient(90deg,var(--r),var(--y))}
+.pc:hover{box-shadow:0 25px 50px rgba(0,0,0,.5)}
+.glr{position:absolute;inset:0;border-radius:22px;opacity:0;transition:opacity .3s;pointer-events:none}
+.pch{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.8rem}
+.pce{font-size:2rem}
+.pcs{font-size:.67rem;font-weight:700;padding:.23rem .62rem;border-radius:50px;background:rgba(61,220,132,.1);color:var(--g);border:1px solid rgba(61,220,132,.2)}
+.pcn{font-size:1.08rem;font-weight:800;margin-bottom:.38rem}
+.pcd{color:var(--mut);font-size:.83rem;line-height:1.7;margin-bottom:1.1rem;flex-grow:1}
+.pcd strong{color:var(--c)}
+.tr{display:flex;flex-wrap:wrap;gap:.38rem;margin-bottom:1.1rem}
+.tp{font-size:.69rem;padding:.18rem .62rem;background:rgba(255,255,255,.05);border:1px solid var(--bdr);border-radius:50px;color:var(--mut);font-weight:600}
+.pls{display:flex;gap:.85rem;border-top:1px solid var(--bdr);padding-top:1rem}
+.pl{font-size:.79rem;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:.32rem;transition:opacity .2s}
+.pl:hover{opacity:.6}
+.gc{color:var(--g)}.pp{color:var(--p)}.cy{color:var(--c)}
+
+/* ── EXPERIENCE ── */
+.tl{position:relative;padding-left:2rem}
+.tl::before{content:'';position:absolute;left:0;top:8px;bottom:20px;width:2px;background:linear-gradient(to bottom,var(--g),var(--p),rgba(168,85,247,0))}
+.tli{position:relative;padding-left:2.3rem;margin-bottom:2.8rem}
+.tld{position:absolute;left:-2.4rem;top:5px;width:14px;height:14px;border-radius:50%;border:3px solid var(--bg)}
+.tli:nth-child(1) .tld{background:var(--g);box-shadow:0 0 0 3px rgba(61,220,132,.2)}
+.tli:nth-child(2) .tld{background:var(--p);box-shadow:0 0 0 3px rgba(168,85,247,.2)}
+.tlp{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;margin-bottom:.4rem}
+.tli:nth-child(1) .tlp{color:var(--g)}.tli:nth-child(2) .tlp{color:var(--p)}
+.tlr{font-size:1.08rem;font-weight:800;margin-bottom:.13rem}
+.tlc{font-size:.86rem;font-weight:600;color:var(--c);margin-bottom:.78rem}
+.tls{list-style:none;display:flex;flex-direction:column;gap:.42rem}
+.tls li{color:var(--mut);font-size:.84rem;padding-left:1.1rem;position:relative;line-height:1.65}
+.tls li::before{content:'▸';position:absolute;left:0}
+.tli:nth-child(1) .tls li::before{color:var(--g)}.tli:nth-child(2) .tls li::before{color:var(--p)}
+.tls li strong{color:var(--txt)}
+
+/* ── EDUCATION ── */
+#education{background:var(--bg2)}
+.edg{display:grid;grid-template-columns:repeat(auto-fill,minmax(275px,1fr));gap:1.1rem}
+.ec{background:var(--bg);border:1px solid var(--bdr);border-radius:18px;padding:1.4rem;transition:all .3s;position:relative;overflow:hidden}
+.ec::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.ec:nth-child(1)::before{background:linear-gradient(90deg,var(--g),var(--c))}
+.ec:nth-child(2)::before{background:linear-gradient(90deg,var(--p),var(--r))}
+.ec:hover{border-color:rgba(255,255,255,.13);transform:translateY(-3px)}
+.ei{font-size:1.7rem;margin-bottom:.65rem}
+.ed{font-size:.97rem;font-weight:700;margin-bottom:.3rem;line-height:1.3}
+.es{font-size:.82rem;color:var(--mut);margin-bottom:.6rem}
+.em{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.45rem}
+.edt{font-size:.72rem;color:var(--mut)}
+.egr{font-size:.78rem;font-weight:700;padding:.2rem .65rem;border-radius:50px;background:rgba(61,220,132,.1);color:var(--g);border:1px solid rgba(61,220,132,.2)}
+.ecr{margin-top:.85rem;padding-top:.85rem;border-top:1px solid var(--bdr);font-size:.76rem;color:var(--mut);line-height:1.6}
+.ecr strong{color:var(--txt)}
+
+/* ── RESUME SECTION ── */
+#resume{background:var(--bg)}
+.res-wrap{max-width:900px;margin:0 auto;text-align:center}
+.res-btns{display:flex;justify-content:center;gap:1rem;margin-bottom:2.5rem;flex-wrap:wrap}
+.rb{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.75rem 1.6rem;border-radius:50px;font-size:.88rem;
+  font-weight:700;cursor:pointer;border:none;font-family:var(--fnt);
+  transition:all .3s;text-decoration:none
+}
+.rb-p{
+  background:linear-gradient(135deg,var(--g),var(--c));
+  color:#09090F;box-shadow:0 10px 28px rgba(61,220,132,.25)
+}
+.rb-p:hover{transform:translateY(-3px);box-shadow:0 16px 36px rgba(61,220,132,.38)}
+.rb-s{background:transparent;color:var(--txt);border:1.5px solid var(--bdr)}
+.rb-s:hover{border-color:var(--p);color:var(--p);transform:translateY(-2px)}
+.res-card{
+  background:var(--bg2);border:1px solid var(--bdr);
+  border-radius:20px;padding:1.8rem;overflow:hidden
+}
+.res-placeholder{
+  padding:3rem;background:var(--bg3);border-radius:12px;
+  border:2px dashed var(--bdr);text-align:center
+}
+.res-placeholder p{color:var(--mut);font-size:.9rem;margin-top:.5rem}
+.res-frame-wrap{
+  width:100%;border-radius:10px;
+  overflow:hidden;display:none
+}
+.res-frame-wrap.on{display:block}
+
+/* ── CONTACT ── */
+#contact{background:var(--bg2)}
+.cg{display:grid;grid-template-columns:1fr 1.2fr;gap:3.5rem;align-items:start}
+.cl h3{font-size:1.1rem;font-weight:700;margin-bottom:.58rem}
+.cl p{color:var(--mut);font-size:.88rem;line-height:1.75;margin-bottom:1.5rem}
+.cls{display:flex;flex-direction:column;gap:.62rem}
+.ck{
+  display:flex;align-items:center;gap:.82rem;
+  padding:.82rem .95rem;background:var(--bg);
+  border:1px solid var(--bdr);border-radius:12px;
+  text-decoration:none;color:var(--txt);font-size:.84rem;
+  font-weight:500;transition:all .3s
+}
+.ck:hover{border-color:var(--lc,var(--g));color:var(--lc,var(--g));transform:translateX(4px)}
+.ci{font-size:1.18rem;flex-shrink:0}
+.clt{display:flex;flex-direction:column}
+.cll{font-size:.68rem;color:var(--mut);font-weight:400}
+.clv{font-weight:600}
+
+/* CONTACT FORM */
+.cf{background:var(--bg);border:1px solid var(--bdr);border-radius:20px;padding:2rem;display:flex;flex-direction:column;gap:.9rem}
+.cf h3{font-size:1.1rem;font-weight:700;margin-bottom:.2rem}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.fg{display:flex;flex-direction:column;gap:.3rem}
+.fll{font-size:.68rem;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.08em}
+.fin,.fta{
+  padding:.78rem .88rem;background:var(--bg2);
+  border:1px solid var(--bdr);border-radius:10px;
+  color:var(--txt);font-family:var(--fnt);font-size:.88rem;
+  outline:none;transition:border-color .3s;width:100%
+}
+.fin:focus,.fta:focus{border-color:var(--g)}
+.fta{resize:vertical;min-height:120px}
+.sb{
+  padding:.85rem;background:linear-gradient(135deg,var(--g),var(--c));
+  color:#09090F;font-weight:700;font-size:.9rem;
+  border:none;border-radius:10px;cursor:pointer;
+  transition:all .3s;width:100%;font-family:var(--fnt)
+}
+.sb:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(61,220,132,.3)}
+.sb:disabled{opacity:.7;cursor:not-allowed;transform:none}
+
+/* TOAST */
+.toast{
+  display:none;position:fixed;bottom:30px;left:50%;
+  transform:translateX(-50%);padding:.75rem 1.5rem;
+  border-radius:12px;font-size:.85rem;font-weight:600;
+  z-index:9999;transition:all .3s;white-space:nowrap
+}
+.toast.ok{display:block;background:rgba(61,220,132,.15);border:1px solid rgba(61,220,132,.3);color:var(--g)}
+.toast.err{display:block;background:rgba(255,99,102,.15);border:1px solid rgba(255,99,102,.3);color:var(--r)}
+
+/* ── FOOTER ── */
+footer{
+  padding:1.7rem 6%;border-top:1px solid var(--bdr);
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem
+}
+.fl{font-size:1rem;font-weight:900;background:linear-gradient(135deg,var(--g),var(--c));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ft{color:var(--mut);font-size:.78rem}
+.fss{display:flex;gap:.62rem}
+.fs{
+  width:33px;height:33px;background:var(--bg2);border:1px solid var(--bdr);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  text-decoration:none;font-size:.88rem;transition:all .3s
+}
+.fs:hover{border-color:var(--g);transform:translateY(-2px)}
+
+/* SCROLL TO TOP */
+.stt{
+  position:fixed;bottom:28px;right:28px;width:46px;height:46px;
+  background:linear-gradient(135deg,var(--g),var(--c));border:none;
+  border-radius:12px;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;font-size:1.1rem;color:#09090F;font-weight:700;
+  opacity:0;visibility:hidden;transition:all .3s;z-index:998
+}
+.stt.on{opacity:1;visibility:visible}
+.stt:hover{transform:translateY(-4px);box-shadow:0 12px 28px rgba(61,220,132,.35)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:880px){.ag,.cg{grid-template-columns:1fr}.pw{display:none}}
+@media(max-width:680px){
+  section{padding:4rem 5%}
+  nav{padding:0 5%}
+  .hero{padding:80px 5% 3rem}
+  footer{padding:1.7rem 5%}
+  .fr2{grid-template-columns:1fr}
+  .res-btns{gap:.7rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="logo">TS.</div>
+  <ul class="nvl" id="navLinks">
+    <li><a href="#home"       onclick="closeMenu()">Home</a></li>
+    <li><a href="#about"      onclick="closeMenu()">About</a></li>
+    <li><a href="#skills"     onclick="closeMenu()">Skills</a></li>
+    <li><a href="#projects"   onclick="closeMenu()">Projects</a></li>
+    <li><a href="#experience" onclick="closeMenu()">Experience</a></li>
+    <li><a href="#education"  onclick="closeMenu()">Education</a></li>
+    <li><a href="#resume"     onclick="closeMenu()">Resume</a></li>
+    <li><a href="#contact"    onclick="closeMenu()">Contact</a></li>
+  </ul>
+  <a href="mailto:tarun1235saini@gmail.com" class="nh">Hire Me</a>
+  <div class="ham" id="ham" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <canvas id="hc"></canvas>
+  <div class="hi">
+    <div class="ht">
+      <div class="badge"><span class="dp"></span> Open to new opportunities</div>
+      <h1>Hi, I'm<br><span class="gr">Tarun Saini</span><br><span id="tw"></span></h1>
+      <p class="hsub">Crafting <strong>production-grade Android apps</strong> with Kotlin & Java. Shipped to Play Store, trusted by real users — from clean architecture to release tracks.</p>
+      <div class="hbs">
+        <a href="#projects" class="bp">View My Work →</a>
+        <a href="#resume"   class="bs">📄 Resume</a>
+      </div>
+      <div class="hps">
+        <div class="hpl"><strong>2.8+</strong> yrs exp.</div><div class="ps"></div>
+        <div class="hpl"><strong>Kotlin</strong> & Java</div><div class="ps"></div>
+        <div class="hpl"><strong>CGPA</strong> 8.12</div><div class="ps"></div>
+        <div class="hpl"><strong>Chandigarh</strong>, India</div>
+      </div>
+    </div>
+    <div class="pw">
+      <div class="ph">
+        <div class="phn"></div>
+        <div class="phs">
+          <div class="phb"></div>
+          <div class="phc"><div class="phl" style="background:linear-gradient(90deg,var(--g),var(--c));width:55%"></div><div class="phl"></div><div class="phl" style="width:75%"></div></div>
+          <div class="phc"><div class="phl" style="background:linear-gradient(90deg,var(--p),var(--r));width:40%"></div><div class="phl"></div><div class="phl" style="background:var(--r);width:27%"></div></div>
+          <div class="phc"><div class="phl" style="background:linear-gradient(90deg,var(--c),var(--p));width:48%"></div><div class="phl"></div><div class="phl" style="width:62%;background:rgba(255,255,255,.09)"></div></div>
+          <div class="phc"><div class="phl" style="background:linear-gradient(90deg,var(--y),var(--r));width:38%"></div><div class="phl"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <p class="sl fi">Who I Am</p>
+  <h2 class="st fi">About <span class="ac">Me</span></h2>
+  <div class="ag">
+    <div>
+      <p class="ap fi">I'm a passionate <strong>Android Developer</strong> based in Chandigarh with <em>2.8+ years</em> of professional experience shipping production Android apps. Core stack: Kotlin & Java, with deep expertise in MVVM, Clean Architecture, and Jetpack components.</p>
+      <p class="ap fi">At <strong>i-Next Web Technology</strong>, I've shipped HappyTask, BaOui, and Hebrew Theme App to the Play Store — owning the full cycle from architecture decisions to Play Console release tracks. I collaborate closely with iOS & backend teams and handle direct <strong>client communication</strong>.</p>
+      <p class="ap fi">CS graduate with a <strong>CGPA of 8.12</strong>, strong foundations in DSA, OOP, and systems. I care about clean code, great UX, and building things users actually love.</p>
+    </div>
+    <div class="sg">
+      <div class="sc fi"><div class="n">2.8+</div><div class="l">Years Exp.</div></div>
+      <div class="sc fi"><div class="n">3</div><div class="l">Play Store Apps</div></div>
+      <div class="sc fi"><div class="n">4</div><div class="l">Projects Built</div></div>
+      <div class="sc fi"><div class="n">2</div><div class="l">Companies</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <p class="sl fi">What I Know</p>
+  <h2 class="st fi">Skills & <span class="ac">Tech Stack</span></h2>
+  <div class="skb fi"><p class="skc">Languages</p><div class="skr">
+    <span class="skt" style="--hc:#7F52FF">🟣 Kotlin</span>
+    <span class="skt" style="--hc:#F89820">☕ Java</span>
+  </div></div>
+  <div class="skb fi"><p class="skc">Android</p><div class="skr">
+    <span class="skt" style="--hc:#3DDC84">🤖 Android SDK</span>
+    <span class="skt" style="--hc:#4FC3F7">🎨 Jetpack Compose</span>
+    <span class="skt" style="--hc:#A855F7">🏷️ XML / ViewBinding</span>
+    <span class="skt" style="--hc:#22D3EE">👁️ ViewModel / LiveData</span>
+    <span class="skt" style="--hc:#FBBF24">⚙️ WorkManager</span>
+    <span class="skt" style="--hc:#FF6366">⏰ AlarmManager</span>
+    <span class="skt" style="--hc:#34D399">🔔 ForegroundService</span>
+    <span class="skt" style="--hc:#60A5FA">🔗 Deep Linking</span>
+    <span class="skt" style="--hc:#3DDC84">🗺️ Google Maps</span>
+    <span class="skt" style="--hc:#A855F7">📱 Material3</span>
+  </div></div>
+  <div class="skb fi"><p class="skc">Architecture</p><div class="skr">
+    <span class="skt" style="--hc:#A855F7">🏗️ MVVM</span>
+    <span class="skt" style="--hc:#22D3EE">🧼 Clean Architecture</span>
+    <span class="skt" style="--hc:#FF6366">📦 Repository Pattern</span>
+    <span class="skt" style="--hc:#FBBF24">💉 Dagger Hilt</span>
+  </div></div>
+  <div class="skb fi"><p class="skc">Libraries</p><div class="skr">
+    <span class="skt" style="--hc:#34D399">📡 Retrofit</span>
+    <span class="skt" style="--hc:#60A5FA">🌐 Volley</span>
+    <span class="skt" style="--hc:#FBBF24">💾 Room (SQLite)</span>
+    <span class="skt" style="--hc:#FFCA28">🔥 Firebase (Auth · Firestore · FCM)</span>
+    <span class="skt" style="--hc:#3DDC84">🏪 Google Play Billing</span>
+    <span class="skt" style="--hc:#A855F7">🔌 WebSockets</span>
+  </div></div>
+  <div class="skb fi"><p class="skc">Tools</p><div class="skr">
+    <span class="skt" style="--hc:#F05033">🌿 Git & GitHub</span>
+    <span class="skt" style="--hc:#3DDC84">🛠️ Android Studio</span>
+    <span class="skt" style="--hc:#22D3EE">📬 Postman</span>
+    <span class="skt" style="--hc:#A855F7">🎨 Figma</span>
+    <span class="skt" style="--hc:#FBBF24">⚡ CI/CD</span>
+    <span class="skt" style="--hc:#34D399">🚀 Play Console</span>
+    <span class="skt" style="--hc:#60A5FA">🔄 Agile / Scrum</span>
+  </div></div>
+  <div class="skb fi"><p class="skc">Concepts</p><div class="skr">
+    <span class="skt" style="--hc:#A855F7">🔡 OOP</span>
+    <span class="skt" style="--hc:#22D3EE">🧮 DSA</span>
+    <span class="skt" style="--hc:#FF6366">🧵 Multithreading</span>
+    <span class="skt" style="--hc:#FBBF24">🧠 Memory Management</span>
+    <span class="skt" style="--hc:#3DDC84">🔄 Coroutines & Flow</span>
+    <span class="skt" style="--hc:#34D399">🔒 Runtime Permissions</span>
+    <span class="skt" style="--hc:#60A5FA">🤖 AI API Integration</span>
+  </div></div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <p class="sl fi">What I've Built</p>
+  <h2 class="st fi">Featured <span class="ac">Projects</span></h2>
+  <div class="pg">
+    <div class="pc fi">
+      <div class="glr"></div>
+      <div class="pch"><div class="pce">🎯</div><span class="pcs">Play Store</span></div>
+      <div class="pcn">HappyTask</div>
+      <p class="pcd">Real-time service booking platform with <strong>15+ categories</strong>. WebSocket notifications are <strong>90% faster</strong> than polling. Deep linking enables 3rd-party navigation directly to specific service screens with role-based authorization.</p>
+      <div class="tr"><span class="tp">Kotlin</span><span class="tp">Java</span><span class="tp">MVVM</span><span class="tp">Firebase</span><span class="tp">WebSockets</span><span class="tp">Google Maps</span></div>
+      <div class="pls"><a href="https://play.google.com/store/apps/details?id=com.ht.happytask" target="_blank" class="pl pp">▶ Play Store</a></div>
+    </div>
+    <div class="pc fi">
+      <div class="glr"></div>
+      <div class="pch"><div class="pce">🌍</div><span class="pcs">Play Store</span></div>
+      <div class="pcn">BaOui</div>
+      <p class="pcd">Offline-first language learning app housing <strong>4,500+ phrases</strong> across 30+ languages. Room DB for local storage, Firebase for real-time sync. Data latency optimized by <strong>60%</strong>. In-app purchases via Play Billing.</p>
+      <div class="tr"><span class="tp">Kotlin</span><span class="tp">Jetpack Compose</span><span class="tp">MVVM</span><span class="tp">Room</span><span class="tp">Firebase</span><span class="tp">Play Billing</span></div>
+      <div class="pls"><a href="https://play.google.com/store/apps/details?id=com.baoui.android" target="_blank" class="pl pp">▶ Play Store</a></div>
+    </div>
+    <div class="pc fi">
+      <div class="glr"></div>
+      <div class="pch"><div class="pce">⏰</div><span class="pcs">Open Source</span></div>
+      <div class="pcn">AlarmManager App</div>
+      <p class="pcd">Background-first alarm architecture persisting through app kill & device reboots via BootCompletedReceiver + WorkManager. Dagger Hilt DI for modular, testable code. Full <strong>Android 12/13/14</strong> runtime permission support.</p>
+      <div class="tr"><span class="tp">Kotlin</span><span class="tp">MVVM</span><span class="tp">Room</span><span class="tp">Dagger Hilt</span><span class="tp">WorkManager</span><span class="tp">ForegroundService</span></div>
+      <div class="pls"><a href="https://github.com/Tarun00108/AlarmManager.git" target="_blank" class="pl gc">⭐ GitHub</a></div>
+    </div>
+    <div class="pc fi">
+      <div class="glr"></div>
+      <div class="pch"><div class="pce">✡️</div><span class="pcs">Play Store</span></div>
+      <div class="pcn">Hebrew Theme App</div>
+      <p class="pcd">Location-aware weather & astronomy services with <strong>35% accuracy improvement</strong>. Hebrew calendar widgets boosted user engagement by <strong>25%</strong>. Secure permission architecture reduced privacy-related issues by 40%.</p>
+      <div class="tr"><span class="tp">Java</span><span class="tp">XML</span><span class="tp">ViewBinding</span><span class="tp">Location Services</span><span class="tp">Calendar Integration</span></div>
+      <div class="pls"><span style="font-size:.76rem;color:var(--mut);font-style:italic">Available on Play Store</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <p class="sl fi">My Journey</p>
+  <h2 class="st fi">Work <span class="ac">Experience</span></h2>
+  <div class="tl">
+    <div class="tli fi">
+      <div class="tld"></div>
+      <div class="tlp">May 2024 – Present · 2+ Years</div>
+      <div class="tlr">Android Developer</div>
+      <div class="tlc">i-Next Web Technology · Chandigarh, India</div>
+      <ul class="tls">
+        <li>Engineered and shipped <strong>HappyTask</strong> to Play Store — service booking platform with 15+ categories; achieved <strong>40% faster booking completion</strong> via optimized API pipelines and UI flow redesign</li>
+        <li>Built <strong>WebSocket notification system</strong> cutting alert latency 90% vs polling; deep linking layer enables 3rd-party navigation directly to specific screens</li>
+        <li>Shipped <strong>Hebrew Theme App</strong> & <strong>BaOui</strong> to Play Store; managed full publish cycle via Play Console with signing and release tracks</li>
+        <li>MVVM + Jetpack Compose + Dagger Hilt with role-based auth; CI/CD pipelines cut release time <strong>35%</strong>; WorkManager ensures <strong>99% background task reliability</strong></li>
+      </ul>
+    </div>
+    <div class="tli fi">
+      <div class="tld"></div>
+      <div class="tlp">Sep 2023 – Mar 2024 · 7 Months</div>
+      <div class="tlr">Junior Android Developer</div>
+      <div class="tlc">Matrid Technology · India</div>
+      <ul class="tls">
+        <li>Streamlined <strong>Firebase Authentication</strong> (email, Google Sign-In, OTP) with error-state handling, improving login success rate by <strong>25%</strong></li>
+        <li>Redesigned list screens with <strong>RecyclerView + DiffUtil</strong> cutting load time 30%; migrated API layer to Retrofit boosting data sync speed by 20%</li>
+        <li>Introduced <strong>Kotlin Coroutines</strong> (viewModelScope, lifecycleScope) eliminating memory leaks across 10+ modules</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <p class="sl fi">Academic Background</p>
+  <h2 class="st fi"><span class="ac">Education</span></h2>
+  <div class="edg">
+    <div class="ec fi">
+      <div class="ei">🎓</div>
+      <div class="ed">B.Tech — Computer Science & Engineering</div>
+      <div class="es">State Institute of Engineering & Technology · Haryana, India</div>
+      <div class="em"><span class="edt">Graduated Aug 2023</span><span class="egr">CGPA 8.12 / 10</span></div>
+      <div class="ecr"><strong>Core Courses:</strong> Data Structures & Algorithms · OOP · Operating Systems · DBMS · Computer Networks</div>
+    </div>
+    <div class="ec fi">
+      <div class="ei">📚</div>
+      <div class="ed">12th — Science Stream</div>
+      <div class="es">Govt. Sr. Sec. School Baragaon · Haryana, India</div>
+      <div class="em"><span class="edt">Completed Mar 2019</span><span class="egr">78%</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- RESUME -->
+<section id="resume">
+  <p class="sl fi">My Resume</p>
+  <h2 class="st fi">Download & <span class="ac">View Resume</span></h2>
+  <div class="res-wrap">
+    <div class="res-btns">
+      <a 
+        href="https://drive.google.com/uc?export=download&id=14AbmNzdx2bJrDYFw9a1l2UGniLXYtqBW" 
+        class="rb rb-p" 
+        target="_blank"
+        download
+      >⬇️ Download PDF</a>
+      <button class="rb rb-s" id="previewBtn" onclick="toggleResume()">👁️ View Resume</button>
+      <a 
+        href="https://drive.google.com/file/d/14AbmNzdx2bJrDYFw9a1l2UGniLXYtqBW/view" 
+        class="rb rb-s" 
+        target="_blank"
+      >🔗 Open in Drive</a>
+    </div>
+    <div class="res-card fi">
+      <div id="resPlaceholder" class="res-placeholder">
+        <div style="font-size:2.5rem">📄</div>
+        <p>Click <strong style="color:var(--txt)">"View Resume"</strong> to preview here,<br>or Download PDF to save it.</p>
+      </div>
+      <div class="res-frame-wrap" id="resFrame">
+        <iframe 
+          id="resIframe"
+          src=""
+          allow="autoplay"
+          style="width:100%;height:700px;border:none;border-radius:10px"
+        ></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- CONTACT -->
+<section id="contact">
+  <p class="sl fi">Get In Touch</p>
+  <h2 class="st fi">Let's <span class="ac">Work Together</span></h2>
+  <div class="cg">
+    <div class="cl fi">
+      <h3>Open to opportunities 🚀</h3>
+      <p>Full-time roles, contract work, or just want to geek out about Android — I'd love to hear from you. Based in Chandigarh, open to remote or relocation.</p>
+      <div class="cls">
+        <a href="mailto:tarun1235saini@gmail.com" class="ck" style="--lc:var(--g)"><span class="ci">📧</span><div class="clt"><span class="cll">Email</span><span class="clv">tarun1235saini@gmail.com</span></div></a>
+        <a href="https://linkedin.com/in/tarun-108sr99" target="_blank" class="ck" style="--lc:#0A66C2"><span class="ci">💼</span><div class="clt"><span class="cll">LinkedIn</span><span class="clv">linkedin.com/in/tarun-108sr99</span></div></a>
+        <a href="https://github.com/Tarun00108" target="_blank" class="ck" style="--lc:var(--p)"><span class="ci">🐙</span><div class="clt"><span class="cll">GitHub</span><span class="clv">github.com/Tarun00108</span></div></a>
+        <a href="#resume" class="ck" style="--lc:var(--c)"><span class="ci">📄</span><div class="clt"><span class="cll">Resume</span><span class="clv">View / Download PDF</span></div></a>
+      </div>
+    </div>
+    <div class="cf fi">
+      <h3>Send me a message 💬</h3>
+      <form id="contactForm" onsubmit="handleSubmit(event)">
+        <div class="fr2">
+          <div class="fg"><label class="fll">Name</label><input class="fin" type="text" id="fname" name="name" required placeholder="Jane Smith"></div>
+          <div class="fg"><label class="fll">Email</label><input class="fin" type="email" id="femail" name="email" required placeholder="jane@company.com"></div>
+        </div>
+        <div class="fg"><label class="fll">Subject</label><input class="fin" type="text" id="fsubject" name="subject" required placeholder="Android Developer Role at..."></div>
+        <div class="fg"><label class="fll">Message</label><textarea class="fta" id="fmessage" name="message" required placeholder="Hi Tarun, I'd love to discuss..."></textarea></div>
+        <button type="submit" class="sb" id="submitBtn">Send Message ✉️</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="fl">Tarun Saini.</div>
+  <div class="ft">Android Developer · Chandigarh, India · 2026</div>
+  <div class="fss">
+    <a href="mailto:tarun1235saini@gmail.com" class="fs" title="Email">📧</a>
+    <a href="https://linkedin.com/in/tarun-108sr99" target="_blank" class="fs" title="LinkedIn">💼</a>
+    <a href="https://github.com/Tarun00108" target="_blank" class="fs" title="GitHub">🐙</a>
+  </div>
+</footer>
+
+<!-- SCROLL TO TOP -->
+<button class="stt" id="stt" onclick="scrollTop()">↑</button>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════
+   RESUME HTML  — YOUR ACTUAL RESUME
+   ═══════════════════════════════════════ */
+const resumeHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Tarun Saini — Android Developer Resume</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+@page{size:A4;margin:0}
+body{
+  font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'Roboto',Arial,sans-serif;
+  font-size:11px;line-height:1.45;color:#111;background:#fff;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact
+}
+.page{
+  width:210mm;min-height:297mm;margin:0 auto;
+  padding:14mm 16mm;background:#fff;
+  box-shadow:0 0 0 1px #ddd
+}
+@media screen{.page{margin:20px auto}}
+header{text-align:center;margin-bottom:12px;padding-bottom:10px;border-bottom:2.5px solid #111}
+h1{font-size:22px;font-weight:800;letter-spacing:.5px;margin-bottom:3px}
+.subtitle{font-size:12px;font-weight:600;margin-bottom:6px;color:#333}
+.contact-row{font-size:10px;color:#333;line-height:1.6}
+.contact-row a{color:#111;text-decoration:none}
+h2{
+  font-size:11px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.6px;margin:12px 0 6px;padding-bottom:4px;
+  border-bottom:1.5px solid #111
+}
+h3{font-size:11px;font-weight:700;margin-bottom:2px}
+.exp-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2px}
+.exp-title{font-size:11px;font-weight:700}
+.exp-date{font-size:10px;color:#555;white-space:nowrap}
+.exp-company{font-size:10.5px;font-weight:600;color:#222;margin-bottom:5px}
+ul{margin:4px 0 8px 18px;padding:0}
+li{font-size:10px;line-height:1.6;margin-bottom:2px}
+li strong{font-weight:600}
+.skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 20px;margin:4px 0}
+.sk{font-size:10px;line-height:1.5}
+.sk-label{font-weight:700}
+.proj{margin-bottom:7px;padding:5px 7px;background:#f8f8f8;border-left:3px solid #333}
+.proj-name{font-size:11px;font-weight:700;margin-bottom:2px}
+.proj-detail{font-size:9.5px;color:#333;line-height:1.5}
+.badge{display:inline-block;font-size:8px;padding:1px 5px;border:1px solid #888;margin-left:4px;vertical-align:middle}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:6px 0}
+.metric{background:#f5f5f5;padding:4px 6px;border:1px solid #ddd;text-align:center;font-size:10px}
+.metric strong{display:block;font-size:13px}
+.edu-item{margin-bottom:6px}
+.deg{font-weight:700;font-size:11px}
+.school{font-size:10px;color:#333}
+.yr{font-size:10px;color:#666}
+.two-col{display:grid;grid-template-columns:1.1fr 1fr;gap:3rem}
+@media print{
+  body{padding:0}
+  .page{box-shadow:none;margin:0;width:210mm;min-height:297mm}
+}
+@media screen and (max-width:680px){
+  .page{width:100%;min-height:auto;padding:20px;box-shadow:none}
+  .two-col,.skills-grid{grid-template-columns:1fr}
+  .metrics{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <h1>TARUN SAINI</h1>
+    <p class="subtitle">Android Developer</p>
+    <div class="contact-row">
+      <p>Chandigarh, India &nbsp;|&nbsp; <a href="mailto:tarun1235saini@gmail.com">tarun1235saini@gmail.com</a> &nbsp;|&nbsp; LinkedIn: <a href="https://linkedin.com/in/tarun-108sr99">linkedin.com/in/tarun-108sr99</a></p>
+      <p>GitHub: <a href="https://github.com/Tarun00108">github.com/Tarun00108</a></p>
+    </div>
+  </header>
+
+  <section>
+    <h2>Professional Summary</h2>
+    <p style="font-size:10px;line-height:1.6;margin:0">
+      Android Developer with 2.8+ years of professional experience delivering production-grade Android apps in Kotlin & Java.
+      Deep expertise in MVVM, Clean Architecture, Jetpack components, and real-time systems (WebSockets, Firebase).
+      Shipped HappyTask, BaOui, and Hebrew Theme App to the Google Play Store — managing the full lifecycle from
+      architecture decisions to Play Console release tracks. Strong collaborator with cross-functional iOS & backend teams,
+      direct client communication, and CI/CD ownership.
+    </p>
+    <div class="metrics">
+      <div class="metric"><strong>2.8+</strong>Years Exp.</div>
+      <div class="metric"><strong>3</strong>Play Store Apps</div>
+      <div class="metric"><strong>8.12</strong>CGPA</div>
+      <div class="metric"><strong>2</strong>Companies</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Technical Skills</h2>
+    <div class="skills-grid">
+      <div class="sk"><span class="sk-label">Languages: </span>Kotlin, Java</div>
+      <div class="sk"><span class="sk-label">UI: </span>Jetpack Compose, XML, ViewBinding, Material3</div>
+      <div class="sk"><span class="sk-label">Architecture: </span>MVVM, Clean Architecture, Repository Pattern</div>
+      <div class="sk"><span class="sk-label">DI: </span>Dagger Hilt</div>
+      <div class="sk"><span class="sk-label">Async: </span>Kotlin Coroutines, Flow, StateFlow</div>
+      <div class="sk"><span class="sk-label">Networking: </span>Retrofit, Volley, WebSockets</div>
+      <div class="sk"><span class="sk-label">Database: </span>Room (SQLite), Firebase Firestore, DataStore</div>
+      <div class="sk"><span class="sk-label">Firebase: </span>Auth, Firestore, FCM, Crashlytics</div>
+      <div class="sk"><span class="sk-label">Services: </span>WorkManager, AlarmManager, ForegroundService</div>
+      <div class="sk"><span class="sk-label">Maps: </span>Google Maps SDK, Location Services</div>
+      <div class="sk"><span class="sk-label">Monetization: </span>Google Play Billing, In-App Purchases</div>
+      <div class="sk"><span class="sk-label">Tools: </span>Git, GitHub, Android Studio, Postman, Figma, CI/CD, Play Console, Agile/Scrum</div>
+      <div class="sk"><span class="sk-label">Concepts: </span>OOP, DSA, Multithreading, Memory Management, Deep Linking, Runtime Permissions, AI API Integration</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Professional Experience</h2>
+
+    <div style="margin-bottom:12px">
+      <div class="exp-row">
+        <div class="exp-title">Android Developer</div>
+        <div class="exp-date">May 2024 – Present</div>
+      </div>
+      <div class="exp-company">i-Next Web Technology &nbsp;·&nbsp; Chandigarh, India</div>
+      <ul>
+        <li>Engineered and shipped <strong>HappyTask</strong> to Play Store — service booking platform with 15+ categories; achieved <strong>40% faster booking completion</strong> via optimized API pipelines and UI flow redesign</li>
+        <li>Built <strong>WebSocket notification system</strong> cutting alert latency <strong>90%</strong> vs polling; deep linking layer enables 3rd-party navigation directly to specific service screens with role-based authorization</li>
+        <li>Shipped <strong>Hebrew Theme App</strong> to Play Store — location-aware weather & astronomy with <strong>35% accuracy improvement</strong>; Hebrew calendar widgets boosted engagement by <strong>25%</strong></li>
+        <li>Shipped <strong>BaOui</strong> — offline-first language learning app with 4,500+ phrases across 30+ languages; Room DB + Firebase sync; data latency optimized by <strong>60%</strong>; Play Billing integration</li>
+        <li>Managed complete Play Console lifecycle: signing, release tracks, rollouts, and crash monitoring for 3 production apps</li>
+        <li>MVVM + Jetpack Compose + Dagger Hilt architecture; CI/CD pipelines cut release time <strong>35%</strong>; WorkManager ensures <strong>99% background task reliability</strong></li>
+        <li>Collaborated directly with iOS team & backend team; handled client communication and requirement gathering</li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="exp-row">
+        <div class="exp-title">Junior Android Developer</div>
+        <div class="exp-date">Sep 2023 – Mar 2024 &nbsp;·&nbsp; 7 Months</div>
+      </div>
+      <div class="exp-company">Matrid Technology &nbsp;·&nbsp; India</div>
+      <ul>
+        <li>Streamlined <strong>Firebase Authentication</strong> (email, Google Sign-In, OTP) with robust error-state handling, improving login success rate by <strong>25%</strong></li>
+        <li>Redesigned list screens with <strong>RecyclerView + DiffUtil</strong> cutting load time 30%; migrated API layer to Retrofit boosting data sync speed by <strong>20%</strong></li>
+        <li>Introduced <strong>Kotlin Coroutines</strong> (viewModelScope, lifecycleScope) eliminating memory leaks across 10+ modules</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Key Projects</h2>
+
+    <div class="proj">
+      <p class="proj-name">HappyTask — Service Booking Platform <span class="badge">Play Store</span></p>
+      <p class="proj-detail">Real-time booking with 15+ service categories. WebSocket notifications 90% faster than polling. Deep linking for 3rd-party navigation. Role-based auth with MVVM + Firebase.</p>
+      <p class="proj-detail"><strong>Tech:</strong> Kotlin, Java, MVVM, Firebase, WebSockets, Google Maps &nbsp;|&nbsp; play.google.com/store/apps/details?id=com.ht.happytask</p>
+    </div>
+
+    <div class="proj">
+      <p class="proj-name">BaOui — Language Learning App <span class="badge">Play Store</span></p>
+      <p class="proj-detail">Offline-first with 4,500+ phrases across 30+ languages. Room DB for local storage, Firebase for real-time sync. 60% data latency improvement. In-app purchases via Play Billing.</p>
+      <p class="proj-detail"><strong>Tech:</strong> Kotlin, Jetpack Compose, MVVM, Room, Firebase, Play Billing &nbsp;|&nbsp; play.google.com/store/apps/details?id=com.baoui.android</p>
+    </div>
+
+    <div class="proj">
+      <p class="proj-name">AlarmManager App <span class="badge">Open Source</span></p>
+      <p class="proj-detail">Background-first alarm persisting through app kill & device reboots via BootCompletedReceiver + WorkManager. Dagger Hilt DI. Full Android 12/13/14 runtime permission support.</p>
+      <p class="proj-detail"><strong>Tech:</strong> Kotlin, MVVM, Room, Dagger Hilt, WorkManager, ForegroundService &nbsp;|&nbsp; github.com/Tarun00108/AlarmManager</p>
+    </div>
+
+    <div class="proj">
+      <p class="proj-name">Hebrew Theme App <span class="badge">Play Store</span></p>
+      <p class="proj-detail">Location-aware weather & astronomy with 35% accuracy improvement. Hebrew calendar widgets boosted engagement 25%. Secure permission architecture reduced privacy issues by 40%.</p>
+      <p class="proj-detail"><strong>Tech:</strong> Java, XML, ViewBinding, Location Services, Calendar Integration</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Education</h2>
+    <div class="two-col">
+      <div class="edu-item">
+        <p class="deg">B.Tech — Computer Science & Engineering</p>
+        <p class="school">State Institute of Engineering & Technology, Haryana</p>
+        <p class="yr">Graduated Aug 2023 &nbsp;|&nbsp; <strong>CGPA: 8.12 / 10</strong></p>
+        <p style="font-size:9.5px;color:#444;margin-top:3px"><strong>Courses:</strong> Data Structures & Algorithms · OOP · Operating Systems · DBMS · Computer Networks</p>
+      </div>
+      <div class="edu-item">
+        <p class="deg">12th — Science Stream</p>
+        <p class="school">Govt. Sr. Sec. School Baragaon, Haryana</p>
+        <p class="yr">Completed Mar 2019 &nbsp;|&nbsp; <strong>78%</strong></p>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>`;
+
+/* ═══════════════════════════════════════
+   THREE.JS PARTICLE NETWORK
+   ═══════════════════════════════════════ */
+(function(){
+  if(typeof THREE==='undefined') return;
+  const canvas=document.getElementById('hc');
+  const hero=document.querySelector('.hero');
+  const W=()=>hero.offsetWidth, H=()=>hero.offsetHeight;
+  const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+  renderer.setSize(W(),H()); renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  const scene=new THREE.Scene();
+  const cam=new THREE.PerspectiveCamera(55,W()/H(),.1,1000);
+  cam.position.z=65;
+  const N=window.innerWidth<768?45:90;
+  const geo=new THREE.BufferGeometry();
+  const pos=new Float32Array(N*3), vel=new Float32Array(N*3), col=new Float32Array(N*3);
+  const COLS=[[.24,.86,.52],[.13,.83,.93],[.66,.33,.97],[1,.39,.4]];
+  for(let i=0;i<N;i++){
+    pos[i*3]=(Math.random()-.5)*110; pos[i*3+1]=(Math.random()-.5)*70; pos[i*3+2]=(Math.random()-.5)*30;
+    vel[i*3]=(Math.random()-.5)*.055; vel[i*3+1]=(Math.random()-.5)*.04; vel[i*3+2]=0;
+    const c=COLS[i%COLS.length|0]; col[i*3]=c[0]; col[i*3+1]=c[1]; col[i*3+2]=c[2];
+  }
+  geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  geo.setAttribute('color',new THREE.BufferAttribute(col,3));
+  const pts=new THREE.Points(geo,new THREE.PointsMaterial({size:.75,vertexColors:true,transparent:true,opacity:.72}));
+  scene.add(pts);
+  const ML=120, lp=new Float32Array(ML*6);
+  const lg=new THREE.BufferGeometry();
+  lg.setAttribute('position',new THREE.BufferAttribute(lp,3));
+  lg.setDrawRange(0,0);
+  scene.add(new THREE.LineSegments(lg,new THREE.LineBasicMaterial({color:0x3DDC84,transparent:true,opacity:.13})));
+  let tx=0,ty=0,cx=0,cy=0;
+  window.addEventListener('mousemove',e=>{tx=(e.clientX/innerWidth-.5)*9;ty=-(e.clientY/innerHeight-.5)*6});
+  (function loop(){
+    requestAnimationFrame(loop);
+    const p=geo.attributes.position.array;
+    for(let i=0;i<N;i++){
+      p[i*3]+=vel[i*3]; p[i*3+1]+=vel[i*3+1];
+      if(Math.abs(p[i*3])>55) vel[i*3]*=-1;
+      if(Math.abs(p[i*3+1])>35) vel[i*3+1]*=-1;
+    }
+    geo.attributes.position.needsUpdate=true;
+    let li=0;
+    outer: for(let i=0;i<N;i++) for(let j=i+1;j<N;j++){
+      const dx=p[i*3]-p[j*3], dy=p[i*3+1]-p[j*3+1];
+      if(dx*dx+dy*dy<280){
+        lp[li*6]=p[i*3];lp[li*6+1]=p[i*3+1];lp[li*6+2]=0;
+        lp[li*6+3]=p[j*3];lp[li*6+4]=p[j*3+1];lp[li*6+5]=0;
+        if(++li>=ML) break outer;
+      }
+    }
+    lg.attributes.position.needsUpdate=true; lg.setDrawRange(0,li*2);
+    cx+=(tx-cx)*.03; cy+=(ty-cy)*.03;
+    cam.position.x=cx; cam.position.y=cy; cam.lookAt(0,0,0);
+    renderer.render(scene,cam);
+  })();
+  window.addEventListener('resize',()=>{renderer.setSize(W(),H());cam.aspect=W()/H();cam.updateProjectionMatrix()});
+})();
+
+/* ═══════════════════════════════════════
+   3D CARD TILT
+   ═══════════════════════════════════════ */
+document.querySelectorAll('.pc').forEach(card=>{
+  const glr=card.querySelector('.glr');
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    const x=e.clientX-r.left, y=e.clientY-r.top;
+    const rX=(y-r.height/2)/r.height*-14, rY=(x-r.width/2)/r.width*14;
+    card.style.transition='none';
+    card.style.transform=`perspective(900px) rotateX(${rX}deg) rotateY(${rY}deg) translateZ(10px)`;
+    glr.style.opacity='1';
+    glr.style.background=`radial-gradient(circle at ${x}px ${y}px,rgba(255,255,255,.11),transparent 65%)`;
+  });
+  card.addEventListener('mouseleave',()=>{
+    card.style.transition='transform .5s ease';
+    card.style.transform='perspective(900px) rotateX(0) rotateY(0) translateZ(0)';
+    glr.style.opacity='0';
+  });
+});
+
+/* ═══════════════════════════════════════
+   TYPEWRITER
+   ═══════════════════════════════════════ */
+const words=['Android Developer','Kotlin Expert','App Architect','Mobile Engineer'];
+let wi=0,ci=0,del=false;
+const tw=document.getElementById('tw');
+function type(){
+  const w=words[wi];
+  tw.textContent=del?w.slice(0,--ci):w.slice(0,++ci);
+  if(!del&&ci===w.length){del=true;setTimeout(type,1800);return}
+  if(del&&ci===0){del=false;wi=(wi+1)%words.length}
+  setTimeout(type,del?55:88);
+}
+type();
+
+/* ═══════════════════════════════════════
+   SCROLL FADE IN
+   ═══════════════════════════════════════ */
+const io=new IntersectionObserver(
+  es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}}),
+  {threshold:.1}
+);
+document.querySelectorAll('.fi').forEach(el=>io.observe(el));
+
+/* ═══════════════════════════════════════
+   SCROLL EVENTS — nav + scroll-to-top
+   ═══════════════════════════════════════ */
+window.addEventListener('scroll',()=>{
+  const y=scrollY;
+  // nav shrink
+  document.getElementById('navbar').classList.toggle('scrolled',y>50);
+  // scroll-to-top button
+  document.getElementById('stt').classList.toggle('on',y>500);
+  // active nav highlight
+  document.querySelectorAll('section[id]').forEach(s=>{
+    if(y+80>=s.offsetTop && y+80<s.offsetTop+s.offsetHeight){
+      document.querySelectorAll('.nvl a').forEach(a=>{
+        a.style.color = a.getAttribute('href')==='#'+s.id ? 'var(--txt)' : '';
+      });
+    }
+  });
+});
+
+/* ═══════════════════════════════════════
+   SMOOTH ANCHOR SCROLL
+   ═══════════════════════════════════════ */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',function(e){
+    const href=this.getAttribute('href');
+    if(href==='#') return;
+    const target=document.querySelector(href);
+    if(target){
+      e.preventDefault();
+      window.scrollTo({top:target.offsetTop-62,behavior:'smooth'});
+    }
+  });
+});
+
+/* ═══════════════════════════════════════
+   HAMBURGER MENU
+   ═══════════════════════════════════════ */
+function toggleMenu(){
+  document.getElementById('ham').classList.toggle('open');
+  document.getElementById('navLinks').classList.toggle('open');
+}
+function closeMenu(){
+  document.getElementById('ham').classList.remove('open');
+  document.getElementById('navLinks').classList.remove('open');
+}
+
+/* ═══════════════════════════════════════
+   SCROLL TO TOP
+   ═══════════════════════════════════════ */
+function scrollTop(){window.scrollTo({top:0,behavior:'smooth'})}
+
+/* ═══════════════════════════════════════
+   TOAST HELPER
+   ═══════════════════════════════════════ */
+function showToast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast '+type;
+  clearTimeout(t._tid);
+  t._tid=setTimeout(()=>t.className='toast',4500);
+}
+
+/* ═══════════════════════════════════════
+   RESUME — VIEW / HIDE
+   ═══════════════════════════════════════ */
+function toggleResume(){
+  const wrap    = document.getElementById('resFrame');
+  const ph      = document.getElementById('resPlaceholder');
+  const btn     = document.getElementById('previewBtn');
+  const iframe  = document.getElementById('resIframe');
+
+  // Google Drive embed URL
+  const embedURL = 'https://drive.google.com/file/d/14AbmNzdx2bJrDYFw9a1l2UGniLXYtqBW/preview';
+
+  if(wrap.classList.contains('on')){
+    // HIDE
+    wrap.classList.remove('on');
+    ph.style.display  = 'block';
+    btn.textContent   = '👁️ View Resume';
+    iframe.src        = ''; // unload iframe to save memory
+  } else {
+    // SHOW
+    iframe.src        = embedURL;
+    wrap.classList.add('on');
+    ph.style.display  = 'none';
+    btn.textContent   = '✕ Hide Resume';
+
+    // Smooth scroll to resume card so user sees it load
+    setTimeout(()=>{
+      document.getElementById('resFrame')
+        .scrollIntoView({behavior:'smooth', block:'nearest'});
+    }, 300);
+  }
+}
+
+/* ═══════════════════════════════════════
+   RESUME — DOWNLOAD (print-to-PDF)
+   ═══════════════════════════════════════ */
+function downloadResume(){
+  const win=window.open('','_blank');
+  win.document.write(resumeHTML);
+  win.document.close();
+  win.onload=()=>setTimeout(()=>win.print(),400);
+}
+
+/* ═══════════════════════════════════════
+   RESUME — PRINT
+   ═══════════════════════════════════════ */
+function printResume(){
+  const win=window.open('','_blank');
+  win.document.write(resumeHTML);
+  win.document.close();
+  win.onload=()=>win.print();
+}
+
+/* ═══════════════════════════════════════
+   CONTACT FORM — FormSubmit.co
+   ═══════════════════════════════════════
+   HOW IT WORKS:
+   1. First submission → FormSubmit sends you a
+      confirmation email. Click that link ONCE.
+   2. After activation every form submission
+      lands in your inbox at tarun1235saini@gmail.com
+   ═══════════════════════════════════════ */
+function handleSubmit(e){
+  e.preventDefault();
+  const btn=document.getElementById('submitBtn');
+  const orig=btn.textContent;
+  btn.textContent='⏳ Sending...';
+  btn.disabled=true;
+
+  const payload={
+    name:    document.getElementById('fname').value,
+    email:   document.getElementById('femail').value,
+    _subject:`Portfolio Contact: ${document.getElementById('fsubject').value}`,
+    message: document.getElementById('fmessage').value
+  };
+
+  fetch('https://formsubmit.co/ajax/tarun1235saini@gmail.com',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Accept':'application/json'},
+    body:JSON.stringify(payload)
+  })
+  .then(r=>r.json())
+  .then(d=>{
+    if(d.success==='true'||d.success===true){
+      showToast('✅ Message sent! I\'ll get back to you soon.','ok');
+      document.getElementById('contactForm').reset();
+      btn.textContent='✅ Sent!';
+      btn.style.background='#22c55e';
+    } else {
+      throw new Error('failed');
+    }
+  })
+  .catch(()=>{
+    showToast('❌ Something went wrong — please email me directly.','err');
+    btn.textContent='❌ Failed';
+    btn.style.background='#ef4444';
+  })
+  .finally(()=>{
+    setTimeout(()=>{
+      btn.textContent=orig;
+      btn.style.background='';
+      btn.disabled=false;
+    },4000);
+  });
+}
+</script>
+</body>
+</html>
